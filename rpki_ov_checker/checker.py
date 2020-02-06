@@ -94,7 +94,7 @@ def main():
 
     for rnode in rib.nodes():
         for origin in rnode.data:
-            if rnode.data[origin]['state'] in ['not-found', 'valid']:
+            if rnode.data[origin]['state'] in ['notfound', 'valid']:
                 pass
 
             # figure out what kind of invalid this is
@@ -111,8 +111,8 @@ def main():
                         if covering_prefix.data[c_origin]['state'] == 'valid':
                             rnode.data[origin]['state'] = 'invalid_covered_by_valid'
                             rnode.data[origin]['covered'] = (covering_prefix.prefix, c_origin)
-                        elif covering_prefix.data[c_origin]['state'] == 'not-found':
-                            rnode.data[origin]['state'] = 'invalid_covered_by_not-found'
+                        elif covering_prefix.data[c_origin]['state'] == 'notfound':
+                            rnode.data[origin]['state'] = 'invalid_covered_by_notfound'
                             rnode.data[origin]['covered'] = (covering_prefix.prefix, c_origin)
                         elif covering_prefix.data[c_origin]['state'] == 'invalid':
                             rnode.data[origin]['state'] = 'invalid_unreachable'

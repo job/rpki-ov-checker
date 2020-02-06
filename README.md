@@ -13,39 +13,56 @@ Installation
 
 `pip3 install git+https://github.com/job/rpki-ov-checker`
 
-Use
----
+Example use case
+----------------
 
-`$ rpki-ov-checker <file>`
+Here we extract routes from an IOS XR device and process them to figure out
+which customers we should contact to help them repair their RPKI ROAs or BGP
+announcements.
 
-or, with a local VRP JSON file
+```
+# obtain a list of all customer prefixes
+$ ssh r02.amstnl02.nl.bb.gin.ntt.net 'show bgp ipv4 uni community 2914:370 | include /' \
+    | grep -v /32 | grep -v \( > customers-v4
+$ dos2unix customers-v4
 
-`$ cat <file> | rpki-ov-checker -c export.json`
+# obtain whole BGP RIB
+$ ssh r02.amstnl02.nl.bb 'show bgp ipv4 uni | include /' \
+    | grep -v /32 | grep -v \( > rib-v4
+$ dos2unix rib-v4
 
-Example output
---------------
+# cook the output a bit, screen scraping sucks... I weep gently
+$ sed 's/^...//' customers-v4 \
+    | awk '{ print $1 }' \
+    | egrep "^[0-9]" > customer_prefixes
+$ sed 's/^...//;s/ .$//;s/{.*//' rib-v4 \
+    | awk '{ print $1 " " $NF }' \
+    | egrep "^[0-9]" > full_rib 
+
+# run the checker and filter out customers
+$ rpki-ov-checker full_rib | fgrep -f customer_prefixes | grep invalid | sort -R | head
+invalid_covered_by_not-found 123.101.0.0/21 4809 covering route: 123.101.0.0/16 4134
+invalid_covered_by_valid 46.3.74.0/24 134121 covering route: 46.3.0.0/16 207636
+invalid_unreachable 83.231.209.0/24 3949
+invalid_unreachable 124.30.247.0/24 9583
+invalid_covered_by_valid 125.21.232.0/24 9730 covering route: 125.21.0.0/16 9498
+invalid_unreachable 120.29.92.0/24 17639
+invalid_unreachable 31.40.164.0/24 200872
+invalid_covered_by_notfound 45.12.139.0/24 40676 covering route: 45.12.136.0/22 35913
+invalid_covered_by_valid 122.160.178.0/24 24560 covering route: 122.160.0.0/16 24560
+invalid_covered_by_valid 61.90.251.0/24 21734 covering route: 61.90.192.0/18 7470
+
+```
 
 `invalid_unreachable` the RIB entry is invalid, and no alternative _valid_ or
-_not-found_ route exists to that set of destination IP addresses.
+_not-found_ route exists to that set of destination IP addresses. These entries
+are the problematic ones.
 
-`invalid_covered_by_valid` the RIB entry is invalid, but covered by a _valid_ route
+`invalid_covered_by_valid` the RIB entry is invalid, but covered by a _valid_
+route.The IP addresses covered by the route will remain reachable.
 
-`invalid_covered_by_not-found` the RIB entry is invalid, but covered by a less specific route which is _not-found_
-
-```
-$ cd testdata
-$ rpki-ov-checker -c rpki-export.json router_output_bgp_rib | sort -R | head
-invalid_covered_by_valid 202.158.104.0/22 4787 covering route: 202.158.0.0/17 4787
-invalid_unreachable 92.118.115.0/24 43260
-not-found 135.0.192.0/20 54614
-not-found 184.7.224.0/20 2379
-not-found 185.140.193.0/24 203257
-not-found 199.27.86.0/24 22071
-not-found 2402:3a80:1406::/47 38266
-not-found 37.98.234.0/24 16839
-not-found 74.44.252.0/24 3593
-valid 201.200.155.0/24 11830
-```
+`invalid_covered_by_not-found` the RIB entry is invalid, but covered by a
+less specific route which is _notfound_.
 
 Copyright
 ---------
