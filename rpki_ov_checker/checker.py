@@ -38,6 +38,12 @@ def sort_prefixes(p_list):
     return ['/'.join(t) for t in l]
 
 
+def subnet_in_subnet(p1, p2):
+    p1 = ip_network(p1)
+    p2 = ip_network(p2)
+    return p1.network_address >= p2.network_address and \
+        p1.broadcast_address <= p2.broadcast_address
+
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter)
@@ -98,7 +104,7 @@ def main():
                 supernet = rib.search_worst(rnode.prefix)
                 related = rib.search_covered(supernet.prefix)
                 for r in sort_prefixes([x.prefix for x in related]):
-                    if not ip_network(rnode.prefix).subnet_of(ip_network(r)):
+                    if not subnet_in_subnet(rnode.prefix, r):
                         continue
                     covering_prefix = rib.search_exact(r)
                     for c_origin in covering_prefix.data:
