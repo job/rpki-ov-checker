@@ -108,6 +108,8 @@ def main():
                         elif covering_prefix.data[c_origin]['state'] == 'not-found':
                             rnode.data[origin]['state'] = 'invalid_covered_by_not-found'
                             rnode.data[origin]['covered'] = (covering_prefix.prefix, c_origin)
+                        elif covering_prefix.data[c_origin]['state'] == 'invalid':
+                            rnode.data[origin]['state'] = 'invalid_unreachable'
 
     for rnode in rib.nodes():
         for origin in rnode.data:
