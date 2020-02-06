@@ -55,11 +55,11 @@ invalid_covered_by_valid 61.90.251.0/24 21734 covering route: 61.90.192.0/18 747
 ```
 
 `invalid_unreachable` the RIB entry is invalid, and no alternative _valid_ or
-_not-found_ route exists to that set of destination IP addresses. These entries
+_notfound_ route exists to that set of destination IP addresses. These entries
 are the problematic ones.
 
 `invalid_covered_by_valid` the RIB entry is invalid, but covered by a _valid_
-route.The IP addresses covered by the route will remain reachable.
+route. The IP addresses covered by the route will remain reachable.
 
 `invalid_covered_by_notfound` the RIB entry is invalid, but covered by a
 less specific route which is _notfound_.
