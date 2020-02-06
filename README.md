@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/job/rpki-ov-checker.svg?branch=master)](https://travis-ci.org/job/rpki-ov-checker)
+[![Requirements Status](https://requires.io/github/job/rpki-ov-checker/requirements.svg?branch=master)](https://requires.io/github/job/rpki-ov-checker/requirements/?branch=master)
+
 RPKI Origin Validation Checker
 ==============================
 
