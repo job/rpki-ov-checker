@@ -54,6 +54,9 @@ def main():
                         help="""Location of the RPKI Cache in JSON format
 (default: https://rpki.gin.ntt.net/api/export.json)""")
 
+    parser.add_argument('-j', '--json', action='store_true', default=False,
+                        dest='json', help="Display output in JSON format")
+
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s ' + rpki_ov_checker.__version__)
 
@@ -75,6 +78,9 @@ def main():
     else:
         with open(args.rib_dump) as f:
             bgp_rib = [x.strip() for x in f.readlines()]
+
+    if args.json:
+        json_blob = {}
 
     vrps = create_vrp_index(validator_export)
 
@@ -117,16 +123,22 @@ def main():
                         elif covering_prefix.data[c_origin]['state'] == 'invalid':
                             rnode.data[origin]['state'] = 'invalid_unreachable'
 
-    for rnode in rib.nodes():
-        for origin in rnode.data:
-            print("{} {} {}".format(rnode.data[origin]['state'],
-                                    rnode.prefix, origin), end='')
-
-            if rnode.data[origin]['state'].startswith('invalid_covered_by_'):
-                print(" covering route: %s %s" % rnode.data[origin]['covered'])
+            if args.json:
+                if not rnode.prefix in json_blob.keys():
+                    json_blob[rnode.prefix] = {origin: rnode.data[origin]}
+                else:
+                    json_blob[rnode.prefix][origin] = rnode.data[origin]
             else:
-                print("")
+                print("{} {} {}".format(rnode.data[origin]['state'],
+                                        rnode.prefix, origin), end='')
 
+                if rnode.data[origin]['state'].startswith('invalid_covered_by_'):
+                    print(" covering route: %s %s"
+                          % rnode.data[origin]['covered'])
+                else:
+                    print("")
+    if args.json:
+        print(json.dumps(json_blob))
 
 def create_vrp_index(export):
     #
