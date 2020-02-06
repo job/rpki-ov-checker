@@ -41,7 +41,7 @@ $ sed 's/^...//;s/ .$//;s/{.*//' rib-v4 \
 
 # run the checker and filter out customers
 $ rpki-ov-checker full_rib | fgrep -f customer_prefixes | grep invalid | sort -R | head
-invalid_covered_by_not-found 123.101.0.0/21 4809 covering route: 123.101.0.0/16 4134
+invalid_covered_by_notfound 123.101.0.0/21 4809 covering route: 123.101.0.0/16 4134
 invalid_covered_by_valid 46.3.74.0/24 134121 covering route: 46.3.0.0/16 207636
 invalid_unreachable 83.231.209.0/24 3949
 invalid_unreachable 124.30.247.0/24 9583
