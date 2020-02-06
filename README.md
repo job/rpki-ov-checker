@@ -61,7 +61,7 @@ are the problematic ones.
 `invalid_covered_by_valid` the RIB entry is invalid, but covered by a _valid_
 route.The IP addresses covered by the route will remain reachable.
 
-`invalid_covered_by_not-found` the RIB entry is invalid, but covered by a
+`invalid_covered_by_notfound` the RIB entry is invalid, but covered by a
 less specific route which is _notfound_.
 
 Copyright
