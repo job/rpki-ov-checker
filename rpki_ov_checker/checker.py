@@ -93,7 +93,7 @@ def main():
         if not rnode:
             rnode = rib.add(prefix)
             rnode.data[origin] = validation_state(vrps, prefix, origin)
-        elif rnode.data[origin]: # dont duplicate work
+        elif origin in rnode.data.keys(): # dont duplicate work
             continue
         else:
             rnode.data[origin] = validation_state(vrps, prefix, origin)
