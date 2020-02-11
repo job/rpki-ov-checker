@@ -53,7 +53,7 @@ setup(
     description='RPKI Origin Validation checker',
     long_description=README,
     long_description_content_type="text/markdown",
-    license='BSD',
+    license='ISCL',
     keywords='rpki prefix routing networking',
     setup_requires=reqs,
     install_requires=reqs,

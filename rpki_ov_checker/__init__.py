@@ -1,4 +1,4 @@
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __author__ = "Job Snijders"
 __author_email__ = "job@ntt.net"
 __copyright__ = "Copyright 2020, Job Snijders"
