@@ -87,7 +87,14 @@ def main():
     rib = radix.Radix()
 
     for line in bgp_rib:
-        prefix, origin = line.split()
+        try:
+            prefix, origin = line.split()
+        except ValueError:
+            print("Error parsing this input line:")
+            print(line)
+            print("The expected format is a prefix and an origin ASN per line, whitespace separated.")
+            sys.exit(1)
+
         origin = int(origin)
         rnode = rib.search_exact(prefix)
         if not rnode:
