@@ -49,10 +49,10 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('-c', dest='cache',
-                        default="https://rpki.gin.ntt.net/api/export.json",
+                        default="https://console.rpki-client.org/vrps.json",
                         type=str,
                         help="""Location of the RPKI Cache in JSON format
-(default: https://rpki.gin.ntt.net/api/export.json)""")
+(default: https://console.rpki-client.org/vrps.json)""")
 
     parser.add_argument('-j', '--json', action='store_true', default=False,
                         dest='json', help="Display output in JSON format")
@@ -161,7 +161,7 @@ def create_vrp_index(export):
         prefix_obj = ip_network(roa['prefix'])
 
         try:
-            asn = int(roa['asn'].replace("AS", ""))
+            asn = roa['asn']
             if not 0 <= asn < 4294967296:
                 raise ValueError
         except ValueError:
