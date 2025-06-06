@@ -99,6 +99,7 @@ def main():
         rnode = rib.search_exact(prefix)
         if not rnode:
             rnode = rib.add(prefix)
+            rnode.data  = {}
             rnode.data[origin] = validation_state(vrps, prefix, origin)
         elif origin in rnode.data.keys(): # dont duplicate work
             continue
@@ -110,9 +111,6 @@ def main():
             if rnode.data[origin]['state'] in ['notfound', 'valid']:
                 pass
 
-            # figure out what kind of invalid this is
-            elif rnode == rib.search_worst(rnode.prefix):
-                rnode.data[origin]['state'] = 'invalid_unreachable'
             else:
                 supernet = rib.search_worst(rnode.prefix)
                 related = rib.search_covered(supernet.prefix)
@@ -124,6 +122,7 @@ def main():
                         if covering_prefix.data[c_origin]['state'] == 'valid':
                             rnode.data[origin]['state'] = 'invalid_covered_by_valid'
                             rnode.data[origin]['covered'] = (covering_prefix.prefix, c_origin)
+                            break
                         elif covering_prefix.data[c_origin]['state'] == 'notfound':
                             rnode.data[origin]['state'] = 'invalid_covered_by_notfound'
                             rnode.data[origin]['covered'] = (covering_prefix.prefix, c_origin)
@@ -180,6 +179,7 @@ def create_vrp_index(export):
         rnode = tree.search_exact(roa[0])
         if not rnode:
             rnode = tree.add(roa[0])
+            rnode.data = {}
             rnode.data["roas"] = [{'maxlen': roa[2], 'origin': roa[3],
                                     'ta': roa[4]}]
         else:
